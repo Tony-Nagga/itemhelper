@@ -5,6 +5,7 @@ script_version("1.1")
 script_author("Nagga")
 script_description("Contact - vk.com/t_nagga")
 local dlstatus = require('moonloader').download_status
+local color = 0x348cb2
 
 local imgui = require 'imgui'
 local encoding = require 'encoding'
