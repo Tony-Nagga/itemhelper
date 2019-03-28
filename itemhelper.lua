@@ -1,6 +1,11 @@
 require "lib.moonloader"
 local keys = require "vkeys"
 
+script_version("1.1")
+script_author("Nagga")
+script_description("Contact - vk.com/t_nagga")
+local dlstatus = require('moonloader').download_status
+
 local imgui = require 'imgui'
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
@@ -114,6 +119,40 @@ local abcd = {
 ["IPhone"] = "719-729"
 }
 
+function update()
+  local fpath = os.getenv('TEMP') .. '\\testing_version.json' -- куда будет качаться наш файлик для сравнения версии
+  downloadUrlToFile('https://raw.githubusercontent.com/Tony-Nagga/itemhelper/master/updater', fpath, function(id, status, p1, p2) -- ссылку на ваш гитхаб где есть строчки которые я ввёл в теме или любой другой сайт
+    if status == dlstatus.STATUS_ENDDOWNLOADDATA then
+    local f = io.open(fpath, 'r') -- открывает файл
+    if f then
+      local info = decodeJson(f:read('*a')) -- читает
+      updatelink = info.updateurl
+      if info and info.latest then
+        version = tonumber(info.latest) -- переводит версию в число
+        if version > tonumber(thisScript().version) then -- если версия больше чем версия установленная то...
+          lua_thread.create(goupdate) -- апдейт
+        else -- если меньше, то
+          update = false -- не даём обновиться 
+          sampAddChatMessage(('[Testing]: У вас и так последняя версия! Обновление отменено'), color)
+        end
+      end
+    end
+  end
+end)
+end
+--скачивание актуальной версии
+function goupdate()
+sampAddChatMessage(('[Testing]: Обнаружено обновление. AutoReload может конфликтовать. Обновляюсь...'), color)
+sampAddChatMessage(('[Testing]: Текущая версия: '..thisScript().version..". Новая версия: "..version), color)
+wait(300)
+downloadUrlToFile(updatelink, thisScript().path, function(id3, status1, p13, p23) -- качает ваш файлик с latest version
+  if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+  sampAddChatMessage(('[Testing]: Обновление завершено!'), color)
+  thisScript():reload()
+end
+end)
+end
+
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 	while not isSampAvailable() do wait(100) end
@@ -160,6 +199,11 @@ end
 
 function imgui.OnDrawFrame()
 	imgui.Begin(u8"ItemHelper by Nagga")
+	imgui.Text(u8"Обновление:")
+	if imgui.Button(u8"Проверка обновления") then
+      printStringNow('Updating!', 1000)
+      update()
+    end
 	imgui.Text(u8"Часы:")
 	imgui.PushItemWidth(200) --Устанавливаем ширину элементов listBox
 	if imgui.ListBox('##Часы', selected_item, {'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '503', '504', '505'}, 3) then
