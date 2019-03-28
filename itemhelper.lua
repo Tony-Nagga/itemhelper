@@ -150,7 +150,7 @@ end
 function giveitemhelp()
 	sampAddChatMessage(tag .. "{FFFFFF}: {FF4500}/ngmenu {FFFFFF}- открыть меню выдачи предметов.", -1)
 	sampAddChatMessage(tag .. "{FFFFFF}: {FF4500}/ngitem {FFFFFF}[{9ACD32}Name{FFFFFF}] - поиск предмета по Названию.", -1)
-	sampAddChatMessage(tag .. "{FFFFFF}: {FFFFFF}Пример: {FF4500}/ngiveitem {9ACD32}Повязка на глаз {FFFFFF}- выдаст в чат ID = 120.", -1)
+	sampAddChatMessage(tag .. "{FFFFFF}: {FFFFFF}Пример: {FF4500}/ngitem {9ACD32}Повязка на глаз {FFFFFF}- выдаст в чат ID = 120.", -1)
 end
 
 function cmd_ngmenu(arg)
